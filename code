@@ -1,0 +1,53 @@
+import tensorflow as tf
+from tensorflow.keras import layers, models
+import numpy as np
+from tensorflow.keras.preprocessing import image
+import matplotlib.pyplot as plt
+
+# Load and preprocess a single image
+img_path = '/content/images (1) 2.png'
+img = image.load_img(img_path, target_size=(28, 28), color_mode='grayscale')
+img = image.img_to_array(img)
+img = img / 255.0  # Normalize pixel values
+img = np.expand_dims(img, axis=0)  # Add batch dimension
+
+# Define the LeNet-5 model
+model = models.Sequential()
+
+# Layer 1: Convolutional Layer
+model.add(layers.Conv2D(6, (5, 5), activation='relu', input_shape=(28, 28, 1)))
+
+# Layer 2: Max-Pooling
+model.add(layers.MaxPooling2D((2, 2)))
+
+# Layer 3: Convolutional Layer
+model.add(layers.Conv2D(16, (5, 5), activation='relu'))
+
+# Layer 4: Max-Pooling
+model.add(layers.MaxPooling2D((2, 2)))
+
+# Layer 5: Flatten
+model.add(layers.Flatten())
+
+# Layer 6: Fully Connected Layer
+model.add(layers.Dense(120, activation='relu'))
+
+# Layer 7: Fully Connected Layer
+model.add(layers.Dense(84, activation='relu'))
+
+# Output Layer
+model.add(layers.Dense(10, activation='softmax'))
+
+# Load pre-trained weights (if available)
+# model.load_weights('lenet5_weights.h5')
+
+# Make a prediction on the single input image
+predictions = model.predict(img)
+
+# Interpret predictions
+predicted_class = np.argmax(predictions)
+
+# Display the input image and predicted class
+plt.imshow(img[0, :, :, 0], cmap='gray')
+plt.title(f'Predicted Class: {predicted_class}')
+plt.show()
